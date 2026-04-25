@@ -294,8 +294,8 @@ function SavingsCard() {
           </div>
         </div>
       </div>
-      <div className="h-[32px] relative shrink-0 w-full bg-gradient-to-r from-[#e5faec] from-[24%] to-white/0 to-[135%]">
-        <p className="absolute font-medium leading-[18px] left-[12px] text-[#108757] text-[14px] top-[7px] tracking-[-0.14px] whitespace-nowrap">
+      <div className="h-[32px] relative shrink-0 w-fit flex items-center pl-[12px] pr-[60px] bg-gradient-to-r from-[#e5faec] from-[24%] to-white/0 to-[135%]">
+        <p className="font-medium leading-[18px] text-[#108757] text-[14px] tracking-[-0.14px] whitespace-nowrap">
           That’s 3X of what you paid for!
         </p>
       </div>

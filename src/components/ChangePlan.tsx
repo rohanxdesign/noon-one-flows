@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import StatusBar from "./StatusBar";
 import SmoothCorners from "./SmoothCorners";
 import ReviewAndConfirmSheet, {
@@ -338,20 +339,28 @@ export default function ChangePlan({
         </div>
       </div>
 
-      {/* Sticky bottom CTA — visible only when a different plan is selected.
-          Sits above the home indicator and its own backdrop, hosting the
-          "Change my plan" black button. */}
-      {canConfirm && (
-        <div className="absolute bottom-0 left-0 right-0 z-20 bg-white border-t border-[#eaecf0] px-[16px] pt-[12px] pb-[36px]">
-          <button
-            type="button"
-            onClick={() => setSheetOpen(true)}
-            className="w-full bg-black text-white font-bold text-[14px] rounded-[12px] py-[14px] cursor-pointer"
+      {/* Sticky bottom CTA — slides up from below when a different plan is
+          selected, slides back down when deselected. */}
+      <AnimatePresence>
+        {canConfirm && (
+          <motion.div
+            key="change-plan-cta"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 320, mass: 0.9 }}
+            className="absolute bottom-0 left-0 right-0 z-20 bg-white border-t border-[#eaecf0] rounded-tl-[12px] rounded-tr-[12px] px-[16px] pt-[12px] pb-[36px]"
           >
-            Change my plan
-          </button>
-        </div>
-      )}
+            <button
+              type="button"
+              onClick={() => setSheetOpen(true)}
+              className="w-full bg-black text-white font-bold text-[14px] rounded-[12px] py-[18px] cursor-pointer"
+            >
+              Change my plan
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* iPhone home indicator */}
       <div className="absolute bottom-0 left-0 right-0 z-30 flex justify-center py-[14px] pointer-events-none">

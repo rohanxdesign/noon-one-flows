@@ -301,11 +301,13 @@ function CancelMembershipBlock({ onCancel }: { onCancel?: () => void }) {
 export default function ManageMembership({
   onBack,
   onChangePlan,
+  onCancelMembership,
   planId = "monthly",
   isUpgraded = false,
 }: {
   onBack: () => void;
   onChangePlan?: () => void;
+  onCancelMembership?: () => void;
   planId?: PlanState;
   isUpgraded?: boolean;
 }) {
@@ -366,7 +368,7 @@ export default function ManageMembership({
               onChangePlan={onChangePlan}
             />
             <PaymentMethodBlock />
-            <CancelMembershipBlock />
+            <CancelMembershipBlock onCancel={onCancelMembership} />
           </div>
         </div>
       </div>

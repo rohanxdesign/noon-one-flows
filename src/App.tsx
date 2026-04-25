@@ -3,11 +3,18 @@ import { motion } from "framer-motion";
 import SubscribedUser from "./components/SubscribedUser";
 import ManageMembership, { type PlanState } from "./components/ManageMembership";
 import ChangePlan from "./components/ChangePlan";
+import CancelMembership from "./components/CancelMembership";
+import CancelFeedback from "./components/CancelFeedback";
 import SplashScreen from "./components/SplashScreen";
 import SmoothCorners from "./components/SmoothCorners";
 import { Retune } from "retune";
 
-type Screen = "home" | "manage" | "changePlan";
+type Screen =
+  | "home"
+  | "manage"
+  | "changePlan"
+  | "cancel"
+  | "cancelFeedback";
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -42,10 +49,23 @@ export default function App() {
         setScreen("manage");
       }}
     />
+  ) : screen === "cancel" ? (
+    <CancelMembership
+      onBack={() => setScreen("manage")}
+      onKeepMembership={() => setScreen("manage")}
+      onContinueCancellation={() => setScreen("cancelFeedback")}
+    />
+  ) : screen === "cancelFeedback" ? (
+    <CancelFeedback
+      onBack={() => setScreen("cancel")}
+      onKeepMembership={() => setScreen("manage")}
+      onContinueCancellation={() => setScreen("manage")}
+    />
   ) : screen === "manage" ? (
     <ManageMembership
       onBack={() => setScreen("home")}
       onChangePlan={() => setScreen("changePlan")}
+      onCancelMembership={() => setScreen("cancel")}
       planId={planId}
       isUpgraded={isUpgraded}
     />
