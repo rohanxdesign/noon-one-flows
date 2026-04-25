@@ -1,0 +1,71 @@
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap");
+
+@font-face {
+  font-family: "Noontree";
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: url("./assets/fonts/Noontree-Light.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noontree";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("./assets/fonts/Noontree-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noontree";
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url("./assets/fonts/Noontree-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noontree";
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("./assets/fonts/Noontree-SemiBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noontree";
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("./assets/fonts/Noontree-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noontree";
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+  src: url("./assets/fonts/Noontree-ExtraBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noontree";
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("./assets/fonts/Noontree-Black.woff2") format("woff2");
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Figtree", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #e5e5e5;
+}
+
+button {
+  font-family: inherit;
+}
