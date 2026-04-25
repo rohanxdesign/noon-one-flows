@@ -638,6 +638,13 @@ export default function SubscribedUser({
           </div>
         </div>
       </div>
+
+      {/* iPhone home indicator — same pill as Manage Membership / Change
+          Plan, pinned to the bottom edge of the iPhone frame so the home
+          screen has the same device-shape illusion as the other screens. */}
+      <div className="absolute bottom-0 left-0 right-0 z-30 flex justify-center py-[14px] pointer-events-none">
+        <div className="bg-[#404553] h-[5px] rounded-[8px] w-[124px]" />
+      </div>
     </div>
   );
 }
