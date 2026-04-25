@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import SubscribedUser from "./components/SubscribedUser";
 import ManageMembership, { type PlanState } from "./components/ManageMembership";
 import ChangePlan from "./components/ChangePlan";
@@ -7,6 +7,14 @@ import CancelMembership from "./components/CancelMembership";
 import CancelFeedback from "./components/CancelFeedback";
 import SplashScreen from "./components/SplashScreen";
 import SmoothCorners from "./components/SmoothCorners";
+import {
+  SkeletonGate,
+  HomeSkeleton,
+  ManageSkeleton,
+  ChangePlanSkeleton,
+  CancelSkeleton,
+  CancelFeedbackSkeleton,
+} from "./components/Skeleton";
 import { Retune } from "retune";
 
 type Screen =
@@ -16,15 +24,36 @@ type Screen =
   | "cancel"
   | "cancelFeedback";
 
+type Direction = "forward" | "back";
+
+// iOS-style page slide. Forward: new page enters from the right while the old
+// page slides off to the left. Back: mirrored. The exiting page parallaxes
+// only 25% so the incoming page reads as "on top of the stack".
+const pageVariants = {
+  enter: (dir: Direction) => ({
+    x: dir === "forward" ? "100%" : "-25%",
+  }),
+  center: { x: "0%" },
+  exit: (dir: Direction) => ({
+    x: dir === "forward" ? "-25%" : "100%",
+  }),
+};
+
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [screen, setScreen] = useState<Screen>("home");
+  const [direction, setDirection] = useState<Direction>("forward");
   // The user's current plan. Starts as "monthly"; bumps when they confirm an
   // upgrade in the ChangePlan flow. We also track whether the active plan was
   // upgraded *during this session* so the Manage Membership tag can read
   // "Upgraded plan" instead of "Current plan" right after the change.
   const [planId, setPlanId] = useState<PlanState>("monthly");
   const [isUpgraded, setIsUpgraded] = useState(false);
+
+  const navigate = (next: Screen, dir: Direction) => {
+    setDirection(dir);
+    setScreen(next);
+  };
 
   // Hard cut-off: advance to the home screen at SPLASH_MS regardless of the
   // Lottie's own `complete` event. The animation runs ~3.5s but visually
@@ -37,56 +66,85 @@ export default function App() {
     return () => clearTimeout(t);
   }, [showSplash]);
 
-  const activeKey = showSplash ? "splash" : screen;
-  const activeScreen = showSplash ? (
-    <SplashScreen onDone={() => setShowSplash(false)} />
-  ) : screen === "changePlan" ? (
-    <ChangePlan
-      onBack={() => setScreen("manage")}
-      onConfirmPlan={(newPlanId) => {
-        setPlanId(newPlanId);
-        setIsUpgraded(true);
-        setScreen("manage");
-      }}
-    />
-  ) : screen === "cancel" ? (
-    <CancelMembership
-      onBack={() => setScreen("manage")}
-      onKeepMembership={() => setScreen("manage")}
-      onContinueCancellation={() => setScreen("cancelFeedback")}
-    />
-  ) : screen === "cancelFeedback" ? (
-    <CancelFeedback
-      onBack={() => setScreen("cancel")}
-      onKeepMembership={() => setScreen("manage")}
-      onContinueCancellation={() => setScreen("manage")}
-    />
-  ) : screen === "manage" ? (
-    <ManageMembership
-      onBack={() => setScreen("home")}
-      onChangePlan={() => setScreen("changePlan")}
-      onCancelMembership={() => setScreen("cancel")}
-      planId={planId}
-      isUpgraded={isUpgraded}
-    />
-  ) : (
-    <SubscribedUser onManageMembership={() => setScreen("manage")} />
-  );
+  const renderScreen = () => {
+    switch (screen) {
+      case "changePlan":
+        return (
+          <SkeletonGate skeleton={<ChangePlanSkeleton />}>
+            <ChangePlan
+              onBack={() => navigate("manage", "back")}
+              onConfirmPlan={(newPlanId) => {
+                setPlanId(newPlanId);
+                setIsUpgraded(true);
+                navigate("manage", "back");
+              }}
+            />
+          </SkeletonGate>
+        );
+      case "cancel":
+        return (
+          <SkeletonGate skeleton={<CancelSkeleton />}>
+            <CancelMembership
+              onBack={() => navigate("manage", "back")}
+              onKeepMembership={() => navigate("manage", "back")}
+              onContinueCancellation={() => navigate("cancelFeedback", "forward")}
+            />
+          </SkeletonGate>
+        );
+      case "cancelFeedback":
+        return (
+          <SkeletonGate skeleton={<CancelFeedbackSkeleton />}>
+            <CancelFeedback
+              onBack={() => navigate("cancel", "back")}
+              onKeepMembership={() => navigate("manage", "back")}
+              onContinueCancellation={() => navigate("manage", "back")}
+            />
+          </SkeletonGate>
+        );
+      case "manage":
+        return (
+          <SkeletonGate skeleton={<ManageSkeleton />}>
+            <ManageMembership
+              onBack={() => navigate("home", "back")}
+              onChangePlan={() => navigate("changePlan", "forward")}
+              onCancelMembership={() => navigate("cancel", "forward")}
+              planId={planId}
+              isUpgraded={isUpgraded}
+            />
+          </SkeletonGate>
+        );
+      case "home":
+      default:
+        return (
+          <SkeletonGate skeleton={<HomeSkeleton />}>
+            <SubscribedUser onManageMembership={() => navigate("manage", "forward")} />
+          </SkeletonGate>
+        );
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex justify-center items-start bg-[#e5e5e5] py-8">
       <SmoothCorners radius={20} className="shadow-2xl">
         {showSplash ? (
-          activeScreen
+          <SplashScreen onDone={() => setShowSplash(false)} />
         ) : (
-          <motion.div
-            key={activeKey}
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
-          >
-            {activeScreen}
-          </motion.div>
+          <div className="relative w-[375px] h-[812px] overflow-hidden">
+            <AnimatePresence initial={false} custom={direction} mode="sync">
+              <motion.div
+                key={screen}
+                custom={direction}
+                variants={pageVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.38, ease: [0.32, 0.72, 0, 1] }}
+                className="absolute inset-0"
+              >
+                {renderScreen()}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         )}
       </SmoothCorners>
       {import.meta.env.DEV && <Retune port={9225} />}
