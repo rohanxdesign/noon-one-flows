@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import SubscribedUser from "./components/SubscribedUser";
 import ManageMembership, { type PlanState } from "./components/ManageMembership";
 import ChangePlan from "./components/ChangePlan";
@@ -29,29 +30,43 @@ export default function App() {
     return () => clearTimeout(t);
   }, [showSplash]);
 
+  const activeKey = showSplash ? "splash" : screen;
+  const activeScreen = showSplash ? (
+    <SplashScreen onDone={() => setShowSplash(false)} />
+  ) : screen === "changePlan" ? (
+    <ChangePlan
+      onBack={() => setScreen("manage")}
+      onConfirmPlan={(newPlanId) => {
+        setPlanId(newPlanId);
+        setIsUpgraded(true);
+        setScreen("manage");
+      }}
+    />
+  ) : screen === "manage" ? (
+    <ManageMembership
+      onBack={() => setScreen("home")}
+      onChangePlan={() => setScreen("changePlan")}
+      planId={planId}
+      isUpgraded={isUpgraded}
+    />
+  ) : (
+    <SubscribedUser onManageMembership={() => setScreen("manage")} />
+  );
+
   return (
     <div className="min-h-screen w-full flex justify-center items-start bg-[#e5e5e5] py-8">
       <SmoothCorners radius={20} className="shadow-2xl">
         {showSplash ? (
-          <SplashScreen onDone={() => setShowSplash(false)} />
-        ) : screen === "changePlan" ? (
-          <ChangePlan
-            onBack={() => setScreen("manage")}
-            onConfirmPlan={(newPlanId) => {
-              setPlanId(newPlanId);
-              setIsUpgraded(true);
-              setScreen("manage");
-            }}
-          />
-        ) : screen === "manage" ? (
-          <ManageMembership
-            onBack={() => setScreen("home")}
-            onChangePlan={() => setScreen("changePlan")}
-            planId={planId}
-            isUpgraded={isUpgraded}
-          />
+          activeScreen
         ) : (
-          <SubscribedUser onManageMembership={() => setScreen("manage")} />
+          <motion.div
+            key={activeKey}
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+          >
+            {activeScreen}
+          </motion.div>
         )}
       </SmoothCorners>
       {import.meta.env.DEV && <Retune port={9225} />}
