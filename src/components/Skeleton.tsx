@@ -181,6 +181,38 @@ export function CancelSkeleton() {
   );
 }
 
+export function PostCancelSkeleton() {
+  return (
+    <PageFrame bg="#f4f4f4">
+      <div className="relative flex flex-col gap-[18px] items-center w-[346px] mx-auto pt-[89px] pb-[100px]">
+        {/* Hero */}
+        <div className="flex flex-col items-center gap-[12px]">
+          <Skel className="size-[120px] rounded-full" />
+          <Skel className="h-[28px] w-[200px] rounded-[8px]" />
+          <Skel className="h-[14px] w-[180px] rounded-[6px]" />
+        </div>
+        {/* Coupon card */}
+        <Skel className="w-[346px] h-[280px] rounded-[14px]" />
+        {/* Plan card */}
+        <Skel className="w-[346px] h-[120px] rounded-[12px]" />
+        {/* Savings card */}
+        <Skel className="w-[346px] h-[260px] rounded-[16px]" />
+        {/* Promo strip */}
+        <Skel className="w-[346px] h-[166px] rounded-[12px]" />
+        {/* OSN card */}
+        <Skel className="w-[346px] h-[139px] rounded-[12px]" />
+      </div>
+      {/* Bottom CTA */}
+      <div className="absolute bottom-0 left-0 right-0 bg-white pt-[14px] pb-[14px] px-[16px] rounded-tl-[12px] rounded-tr-[12px] shadow-[0px_-4px_17.6px_rgba(0,0,0,0.08)]">
+        <Skel className="w-full h-[52px] rounded-[12px]" />
+        <div className="flex justify-center pt-[10px]">
+          <div className="bg-[#404553] h-[5px] rounded-[8px] w-[124px]" />
+        </div>
+      </div>
+    </PageFrame>
+  );
+}
+
 export function CancelFeedbackSkeleton() {
   return (
     <PageFrame bg="#ffffff">

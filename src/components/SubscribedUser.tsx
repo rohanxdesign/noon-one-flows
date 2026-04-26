@@ -274,7 +274,7 @@ function SavingsRow({
   );
 }
 
-function SavingsCard() {
+export function SavingsCard() {
   return (
     <SmoothCorners
       radius={16}
@@ -374,7 +374,7 @@ function SavingsCard() {
  * because the SVG is one composited image — per-tile centre-scaling no
  * longer applies (it's baked into the SVG instead).
  */
-function PromoStrip() {
+export function PromoStrip() {
   // Matches Figma node 20787:4759 — white card with the brand trail on top
   // and the "Unlimited same day free delivery" headline + subtext below.
   return (
@@ -421,7 +421,7 @@ function PromoStrip() {
   );
 }
 
-function OsnCard() {
+export function OsnCard() {
   return (
     <SmoothCorners
       radius={12}
@@ -492,7 +492,7 @@ function ValuePropsRow({
   );
 }
 
-function ValuePropsCard() {
+export function ValuePropsCard() {
   const trailingGift = (
     <div className="relative shrink-0 size-[44px]">
       <img alt="" src={ellipse24014} className="absolute inset-0 w-full h-full" />
@@ -568,7 +568,7 @@ function ValuePropsCard() {
   );
 }
 
-function FaqCard() {
+export function FaqCard() {
   const items = [
     "What is noon One?",
     "How much does noon One cost?",

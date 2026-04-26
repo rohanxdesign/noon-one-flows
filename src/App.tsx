@@ -6,6 +6,7 @@ import ChangePlan from "./components/ChangePlan";
 import CancelMembership from "./components/CancelMembership";
 import CancelFeedback from "./components/CancelFeedback";
 import CancelConfirmation from "./components/CancelConfirmation";
+import PostCancel from "./components/PostCancel";
 import SplashScreen from "./components/SplashScreen";
 import SmoothCorners from "./components/SmoothCorners";
 import {
@@ -15,6 +16,7 @@ import {
   ChangePlanSkeleton,
   CancelSkeleton,
   CancelFeedbackSkeleton,
+  PostCancelSkeleton,
 } from "./components/Skeleton";
 import { Retune } from "retune";
 
@@ -24,7 +26,8 @@ type Screen =
   | "changePlan"
   | "cancel"
   | "cancelFeedback"
-  | "cancelled";
+  | "cancelled"
+  | "postCancel";
 
 type Direction = "forward" | "back";
 
@@ -107,7 +110,20 @@ export default function App() {
         // No skeleton: this screen has no loaded content — its first phase
         // is itself a held-icon moment. A pre-roll skeleton would just push
         // the phase 1 → phase 2 reveal back behind a meaningless shimmer.
-        return <CancelConfirmation onDismiss={() => navigate("home", "back")} />;
+        return (
+          <CancelConfirmation
+            onDismiss={() => navigate("postCancel", "forward")}
+          />
+        );
+      case "postCancel":
+        return (
+          <SkeletonGate skeleton={<PostCancelSkeleton />}>
+            <PostCancel
+              onManageMembership={() => navigate("manage", "forward")}
+              onContinueOffer={() => navigate("home", "back")}
+            />
+          </SkeletonGate>
+        );
       case "manage":
         return (
           <SkeletonGate skeleton={<ManageSkeleton />}>
