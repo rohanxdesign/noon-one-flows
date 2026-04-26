@@ -46,6 +46,14 @@ export default function CancelConfirmation({
     return () => clearTimeout(t);
   }, []);
 
+  // Auto-advance to the post-cancel retention screen after the body copy has
+  // had ~1.6s to read (body finishes animating in around 2.15s after mount).
+  // The X badge remains tappable as a manual skip.
+  useEffect(() => {
+    const t = setTimeout(onDismiss, 3800);
+    return () => clearTimeout(t);
+  }, [onDismiss]);
+
   // Icon target (Figma): top: 298px. Centre of an 812px frame puts the
   // 76px badge at top: 368px — so phase 1 sits 70px lower than phase 2.
   const ICON_TOP = 298;
