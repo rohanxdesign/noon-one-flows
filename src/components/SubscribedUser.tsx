@@ -9,6 +9,7 @@ import ellipse2080 from "../assets/ellipse2080.svg";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import heroLogoLottie from "../assets/lottie/hero-logo.lottie?url";
 import SmoothCorners from "./SmoothCorners";
+import SlotNumber from "./SlotNumber";
 import iconTruck from "../assets/icon-truck.svg";
 import seprator from "../assets/seprator.svg";
 import seprator2 from "../assets/seprator2.svg";
@@ -288,7 +289,7 @@ function SavingsCard() {
             <div className="flex items-center relative shrink-0">
               <p className="font-bold leading-[38px] text-[#1d2539] text-[30px] tracking-[-0.45px] whitespace-nowrap">
                 <Aed />
-                124.34
+                <SlotNumber value="124.34" height={38} shimmer delay={0.3} />
               </p>
             </div>
           </div>

@@ -5,6 +5,7 @@ import ManageMembership, { type PlanState } from "./components/ManageMembership"
 import ChangePlan from "./components/ChangePlan";
 import CancelMembership from "./components/CancelMembership";
 import CancelFeedback from "./components/CancelFeedback";
+import CancelConfirmation from "./components/CancelConfirmation";
 import SplashScreen from "./components/SplashScreen";
 import SmoothCorners from "./components/SmoothCorners";
 import {
@@ -22,7 +23,8 @@ type Screen =
   | "manage"
   | "changePlan"
   | "cancel"
-  | "cancelFeedback";
+  | "cancelFeedback"
+  | "cancelled";
 
 type Direction = "forward" | "back";
 
@@ -97,10 +99,15 @@ export default function App() {
             <CancelFeedback
               onBack={() => navigate("cancel", "back")}
               onKeepMembership={() => navigate("manage", "back")}
-              onContinueCancellation={() => navigate("manage", "back")}
+              onContinueCancellation={() => navigate("cancelled", "forward")}
             />
           </SkeletonGate>
         );
+      case "cancelled":
+        // No skeleton: this screen has no loaded content — its first phase
+        // is itself a held-icon moment. A pre-roll skeleton would just push
+        // the phase 1 → phase 2 reveal back behind a meaningless shimmer.
+        return <CancelConfirmation onDismiss={() => navigate("home", "back")} />;
       case "manage":
         return (
           <SkeletonGate skeleton={<ManageSkeleton />}>

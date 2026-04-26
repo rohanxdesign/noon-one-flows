@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import { motion } from "framer-motion";
 import StatusBar from "./StatusBar";
 import SmoothCorners from "./SmoothCorners";
 
@@ -107,8 +108,22 @@ export default function CancelFeedback({
             </p>
             <p className="font-noontree text-[#666d85] text-[16px] leading-[22px] tracking-[-0.28px]">
               You can save{" "}
-              <span className="font-bold text-[#108757]">
+              <span className="relative inline-flex overflow-clip font-bold text-[#108757]">
                 <Aed />928/year
+                <motion.span
+                  className="absolute inset-y-0 w-[60%] pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)",
+                  }}
+                  animate={{ left: ["-60%", "120%"] }}
+                  transition={{
+                    duration: 1.2,
+                    ease: [0.16, 1, 0.3, 1],
+                    repeat: Infinity,
+                    repeatDelay: 2.5,
+                  }}
+                />
               </span>{" "}
               with us. Please tell us why you want to cancel?
             </p>

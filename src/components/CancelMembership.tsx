@@ -1,5 +1,6 @@
 import StatusBar from "./StatusBar";
 import SmoothCorners from "./SmoothCorners";
+import SlotNumber from "./SlotNumber";
 import deliveryIllustration from "../assets/cancel/delivery-illustration.png";
 import dealsIllustration from "../assets/cancel/deals-illustration.png";
 import sneaker from "../assets/cancel/sneaker.png";
@@ -168,7 +169,8 @@ export default function CancelMembership({
           {/* Title */}
           <div className="flex flex-col gap-[2px]">
             <p className="font-noontree font-bold text-[#343d54] text-[28px] leading-[31px] tracking-[-0.68px]">
-              You saved <Aed />343
+              You saved <Aed />
+              <SlotNumber value={343} height={31} shimmer />
             </p>
             <p className="font-noontree text-[#666d85] text-[16px] leading-[22px] tracking-[-0.28px]">
               that's more than what you paid for
