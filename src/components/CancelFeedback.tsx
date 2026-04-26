@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import StatusBar from "./StatusBar";
 import SmoothCorners from "./SmoothCorners";
@@ -73,9 +73,29 @@ export default function CancelFeedback({
 }: {
   onBack: () => void;
   onKeepMembership: () => void;
-  onContinueCancellation: (reason: Reason) => void;
+  onContinueCancellation: (reason: Reason, otherText?: string) => void;
 }) {
   const [selectedReason, setSelectedReason] = useState<Reason | null>(null);
+  const [otherText, setOtherText] = useState("");
+  // Tracks whether the user has tried to submit with Other selected but no
+  // text — once true, the input shows its error state until they type.
+  const [showOtherError, setShowOtherError] = useState(false);
+  const [otherFocused, setOtherFocused] = useState(false);
+  const otherInputRef = useRef<HTMLInputElement>(null);
+  // Floating-label is "lifted" whenever the input has focus or content.
+  const otherLabelFloated = otherFocused || otherText.length > 0;
+
+  const handleContinue = () => {
+    if (!selectedReason) return;
+    if (selectedReason === "Other" && otherText.trim() === "") {
+      setShowOtherError(true);
+      return;
+    }
+    onContinueCancellation(
+      selectedReason,
+      selectedReason === "Other" ? otherText.trim() : undefined,
+    );
+  };
 
   return (
     <div
@@ -140,7 +160,10 @@ export default function CancelFeedback({
               <Fragment key={reason}>
                 <button
                   type="button"
-                  onClick={() => setSelectedReason(reason)}
+                  onClick={() => {
+                    setSelectedReason(reason);
+                    if (reason !== "Other") setShowOtherError(false);
+                  }}
                   className="w-full flex items-center justify-between px-[8px] py-[4px] rounded-[12px] cursor-pointer shrink-0"
                 >
                   <p className="font-noontree font-medium text-[#475067] text-[14px] leading-[18px] tracking-[-0.14px] text-left">
@@ -148,6 +171,108 @@ export default function CancelFeedback({
                   </p>
                   <Radio selected={selectedReason === reason} />
                 </button>
+                {/* When "Other" is the selected option, expand a single-line
+                    input into the row immediately. Validation error shows a
+                    red border + helper text until the user starts typing. */}
+                {reason === "Other" && selectedReason === "Other" && (
+                  <div className="px-[8px] pt-[4px] pb-[4px]">
+                    {/* Click anywhere on the field surface to focus the input
+                        (so the label area is tappable too, not just the
+                        narrow input strip). */}
+                    <div
+                      onClick={() => otherInputRef.current?.focus()}
+                      className={`relative h-[52px] bg-[#f9f9fb] rounded-[8px] border cursor-text transition-colors ${
+                        showOtherError
+                          ? "border-[#e5004e]"
+                          : otherFocused
+                            ? "border-[#cdd2dc]"
+                            : "border-transparent"
+                      }`}
+                    >
+                      {/* Floating label. Idle: sits centred like a placeholder.
+                          Active (focused or has value): lifts to the top-left
+                          and shrinks. Spring is brisk with a small settle so
+                          the motion feels responsive but not snappy-flat. */}
+                      <motion.label
+                        htmlFor="other-reason-input"
+                        initial={false}
+                        animate={{
+                          y: otherLabelFloated ? 6 : 16,
+                          scale: otherLabelFloated ? 0.78 : 1,
+                          color: showOtherError
+                            ? "#e5004e"
+                            : otherLabelFloated
+                              ? "#475067"
+                              : "#666d85",
+                        }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 480,
+                          damping: 36,
+                          mass: 0.6,
+                        }}
+                        style={{ transformOrigin: "top left" }}
+                        className="absolute left-[12px] right-[36px] top-0 pointer-events-none font-noontree font-normal text-[14px] leading-[18px] tracking-[-0.14px] whitespace-nowrap overflow-hidden text-ellipsis"
+                      >
+                        Please tell us the reason (required if other is selected)
+                      </motion.label>
+                      <input
+                        ref={otherInputRef}
+                        id="other-reason-input"
+                        type="text"
+                        value={otherText}
+                        onChange={(e) => {
+                          setOtherText(e.target.value);
+                          if (e.target.value.trim() !== "") setShowOtherError(false);
+                        }}
+                        onFocus={() => setOtherFocused(true)}
+                        onBlur={() => setOtherFocused(false)}
+                        className="absolute left-[12px] right-[36px] top-[24px] bottom-[6px] bg-transparent border-none outline-none font-noontree font-medium text-[14px] leading-[18px] tracking-[-0.14px] text-[#0e0e0e]"
+                      />
+                      {/* Clear X — always visible per Figma; only interactive
+                          when there's text to clear. Subtle scale on press. */}
+                      <motion.button
+                        type="button"
+                        aria-label={otherText !== "" ? "Clear" : undefined}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (otherText === "") return;
+                          setOtherText("");
+                          setShowOtherError(false);
+                          otherInputRef.current?.focus();
+                        }}
+                        whileTap={otherText !== "" ? { scale: 0.85 } : undefined}
+                        animate={{ color: otherText !== "" ? "#666d85" : "#989fb3" }}
+                        transition={{ duration: 0.15 }}
+                        disabled={otherText === ""}
+                        className="absolute right-[12px] top-1/2 -translate-y-1/2 shrink-0 cursor-pointer disabled:cursor-default"
+                      >
+                        <svg viewBox="0 0 16 16" className="block size-[16px]" fill="none" aria-hidden="true">
+                          <path
+                            d="M4 4l8 8M12 4l-8 8"
+                            stroke="currentColor"
+                            strokeWidth="1.4"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </motion.button>
+                    </div>
+                    {/* Error helper — slides in just below the field so the
+                        appearance is anchored to the field, not the layout. */}
+                    <motion.p
+                      initial={false}
+                      animate={{
+                        opacity: showOtherError ? 1 : 0,
+                        y: showOtherError ? 0 : -4,
+                        height: showOtherError ? "auto" : 0,
+                      }}
+                      transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }}
+                      className="overflow-hidden mt-[6px] text-[12px] leading-[16px] text-[#e5004e]"
+                    >
+                      *This field is required
+                    </motion.p>
+                  </div>
+                )}
                 {i < REASONS.length - 1 && (
                   <div className="border-t border-dashed border-[#eaecf0] shrink-0" />
                 )}
@@ -180,9 +305,7 @@ export default function CancelFeedback({
         </button>
         <button
           type="button"
-          onClick={() =>
-            selectedReason && onContinueCancellation(selectedReason)
-          }
+          onClick={handleContinue}
           disabled={!selectedReason}
           className="bg-[#f9f9fb] border border-[#eaecf0] text-[#0e0e0e] font-semibold text-[15px] leading-[20px] tracking-[-0.26px] h-[52px] rounded-[12px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
         >
