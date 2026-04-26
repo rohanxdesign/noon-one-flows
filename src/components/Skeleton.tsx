@@ -181,6 +181,30 @@ export function CancelSkeleton() {
   );
 }
 
+export function PaymentMethodSkeleton() {
+  return (
+    <PageFrame bg="#f2f2f4">
+      {/* Header — back button + title */}
+      <div className="absolute left-[16px] top-[45px] flex items-center gap-[12px]">
+        <Skel className="size-[40px] rounded-full" />
+      </div>
+      <div className="absolute left-1/2 -translate-x-1/2 top-[55px]">
+        <Skel className="h-[20px] w-[140px] rounded-[6px]" />
+      </div>
+      {/* Payment options stack */}
+      <div className="absolute left-1/2 -translate-x-1/2 top-[113px] w-[343px] flex flex-col gap-[12px]">
+        <Skel className="w-full h-[180px] rounded-[8px]" />
+        <Skel className="w-full h-[52px] rounded-[8px]" />
+        <Skel className="w-full h-[52px] rounded-[8px]" />
+      </div>
+      {/* Sticky bottom bar */}
+      <div className="absolute bottom-[24px] left-0 right-0 px-[16px]">
+        <Skel className="w-full h-[60px] rounded-[12px]" />
+      </div>
+    </PageFrame>
+  );
+}
+
 export function PostCancelSkeleton() {
   return (
     <PageFrame bg="#f4f4f4">

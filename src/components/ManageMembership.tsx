@@ -302,12 +302,14 @@ export default function ManageMembership({
   onBack,
   onChangePlan,
   onCancelMembership,
+  onChangePaymentMethod,
   planId = "monthly",
   isUpgraded = false,
 }: {
   onBack: () => void;
   onChangePlan?: () => void;
   onCancelMembership?: () => void;
+  onChangePaymentMethod?: () => void;
   planId?: PlanState;
   isUpgraded?: boolean;
 }) {
@@ -367,7 +369,7 @@ export default function ManageMembership({
               isUpgraded={isUpgraded}
               onChangePlan={onChangePlan}
             />
-            <PaymentMethodBlock />
+            <PaymentMethodBlock onChangeMethod={onChangePaymentMethod} />
             <CancelMembershipBlock onCancel={onCancelMembership} />
           </div>
         </div>

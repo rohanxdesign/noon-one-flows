@@ -7,6 +7,7 @@ import CancelMembership from "./components/CancelMembership";
 import CancelFeedback from "./components/CancelFeedback";
 import CancelConfirmation from "./components/CancelConfirmation";
 import PostCancel from "./components/PostCancel";
+import PaymentMethod from "./components/PaymentMethod";
 import SplashScreen from "./components/SplashScreen";
 import SmoothCorners from "./components/SmoothCorners";
 import {
@@ -17,6 +18,7 @@ import {
   CancelSkeleton,
   CancelFeedbackSkeleton,
   PostCancelSkeleton,
+  PaymentMethodSkeleton,
 } from "./components/Skeleton";
 import { Retune } from "retune";
 
@@ -27,7 +29,8 @@ type Screen =
   | "cancel"
   | "cancelFeedback"
   | "cancelled"
-  | "postCancel";
+  | "postCancel"
+  | "paymentMethod";
 
 type Direction = "forward" | "back";
 
@@ -131,8 +134,18 @@ export default function App() {
               onBack={() => navigate("home", "back")}
               onChangePlan={() => navigate("changePlan", "forward")}
               onCancelMembership={() => navigate("cancel", "forward")}
+              onChangePaymentMethod={() => navigate("paymentMethod", "forward")}
               planId={planId}
               isUpgraded={isUpgraded}
+            />
+          </SkeletonGate>
+        );
+      case "paymentMethod":
+        return (
+          <SkeletonGate skeleton={<PaymentMethodSkeleton />}>
+            <PaymentMethod
+              onBack={() => navigate("manage", "back")}
+              onPay={() => navigate("manage", "back")}
             />
           </SkeletonGate>
         );
