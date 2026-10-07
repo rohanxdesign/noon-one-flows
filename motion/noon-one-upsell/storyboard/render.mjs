@@ -5,7 +5,7 @@ const srv = http.createServer((q, r) => { const p = path.join(ROOT, decodeURICom
 await new Promise(r => srv.listen(0, r));
 const b = await chromium.launch(); const pg = await b.newPage();
 pg.on('pageerror', e => { console.error(e); process.exit(1); });
-await pg.goto(`http://localhost:${srv.address().port}/storyboard/index.html`);
+await pg.goto(`http://localhost:${srv.address().port}/storyboard/${process.argv[2] || 'index.html'}`);
 await pg.waitForFunction(() => window.done, null, { timeout: 60000 });
 const o = await pg.evaluate(() => window.out);
 for (const [k, v] of Object.entries(o)) fs.writeFileSync(path.join(DIR, k + '.png'), Buffer.from(v.split(',')[1], 'base64'));

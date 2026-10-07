@@ -1,0 +1,101 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Pill iterations</title>
+<style>
+@font-face{font-family:Figtree;src:url(../fonts/figtree-500.ttf);font-weight:500}
+@font-face{font-family:Figtree;src:url(../fonts/figtree-600.ttf);font-weight:600}
+@font-face{font-family:Figtree;src:url(../fonts/figtree-700.ttf);font-weight:700}
+@font-face{font-family:Figtree;src:url(../fonts/figtree-800.ttf);font-weight:800}
+@font-face{font-family:Figtree;src:url(../fonts/figtree-900.ttf);font-weight:900}
+</style></head><body>
+<script src="logo.js"></script>
+<script>
+const FW=970,FH=500,RAD=120,CX=FW/2,CY=FH/2;
+const mk=(w,h)=>{const k=document.createElement('canvas');k.width=w;k.height=h;return k;};
+const setF=(x,w,s,ls=0)=>{x.font=`${w} ${s}px Figtree`;x.letterSpacing=ls+'px';};
+function rng(s){return()=>{s|=0;s=s+0x6d2b79f5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const LAY=[['green',C.green],['red',C.red],['pink',C.pink],['yellow',C.yellow]];
+function logo(x,cx,cy,s,o={}){const off=o.off||[[0,0],[0,0],[0,0],[0,0],[0,0]];x.save();x.globalAlpha=o.a??1;
+  LAY.forEach(([k,c],i)=>{x.save();x.translate(cx+off[i][0],cy+off[i][1]);x.scale(s*(o.sx||1),s);x.translate(-20.68,-12);x.fillStyle=c;x.fill(LOGO[k]);x.restore();});
+  x.save();x.translate(cx+off[4][0],cy+off[4][1]);x.scale(s*(o.sx||1),s);x.translate(-20.68,-12);x.fillStyle=o.lc||'#000';['o','n','e'].forEach(k=>x.fill(LOGO[k]));x.restore();x.restore();}
+function cream(x){const g=x.createLinearGradient(0,0,0,FH);g.addColorStop(0,'#FFFCF3');g.addColorStop(1,'#F7E6B8');x.fillStyle=g;x.fillRect(0,0,FW,FH);
+  const r=x.createRadialGradient(CX,FH*.35,0,CX,FH*.35,FW*.55);r.addColorStop(0,'rgba(255,255,255,.95)');r.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=r;x.fillRect(0,0,FW,FH);}
+const fill=(x,c)=>{x.fillStyle=c;x.fillRect(0,0,FW,FH);};
+function txt(x,s,px,py,w,size,col,ls=0,al='center'){setF(x,w,size,ls);x.textAlign=al;x.fillStyle=col;x.fillText(s,px,py);x.textAlign='left';}
+// standard two-line lockup
+function lockup(x,top,bot,col='#0B0B0E',topCol){txt(x,top,CX,288,900,250,topCol||col,-8);txt(x,bot,CX,420,800,112,col,-2);}
+function confetti(x,seed,n,cx,cy,rx,ry){const R=rng(seed),cols=[C.yellow,C.pink,C.green,C.red];for(let i=0;i<n;i++){const a=R()*6.28,r=.75+R()*.35;x.save();x.translate(cx+Math.cos(a)*rx*r,cy+Math.sin(a)*ry*r);x.rotate(R()*3);x.fillStyle=cols[i%4];x.fillRect(-10,-4,20,8);x.restore();}}
+function speed(x,seed,n,y0,y1,x0,x1,col,a=.5){const R=rng(seed);x.strokeStyle=col;x.lineCap='round';for(let i=0;i<n;i++){const y=y0+R()*(y1-y0),l=60+R()*200,s=x0+R()*(x1-x0);x.globalAlpha=a*(.4+R()*.6);x.lineWidth=4+R()*6;x.beginPath();x.moveTo(s,y);x.lineTo(s+l,y);x.stroke();}x.globalAlpha=1;}
+function ghost(x,draw,n,dx,dy){for(let i=n;i>=1;i--){x.save();x.globalAlpha=.12*(n-i+1)/n;x.translate(dx*i,dy*i);draw();x.restore();}draw();}
+function parcel(x,cx,cy,s,rot=0){x.save();x.translate(cx,cy);x.rotate(rot);x.scale(s,s);
+  x.fillStyle='#E0A867';x.beginPath();x.moveTo(-62,-30);x.lineTo(-28,-62);x.lineTo(70,-62);x.lineTo(36,-30);x.closePath();x.fill();
+  x.fillStyle='#B97A3C';x.beginPath();x.moveTo(36,-30);x.lineTo(70,-62);x.lineTo(70,32);x.lineTo(36,64);x.closePath();x.fill();
+  x.fillStyle='#CF8F4E';x.fillRect(-62,-30,98,94);
+  x.fillStyle=C.yellow;x.beginPath();x.moveTo(-22,-30);x.lineTo(12,-62);x.lineTo(30,-62);x.lineTo(-4,-30);x.closePath();x.fill();x.fillRect(-22,-30,18,40);
+  x.strokeStyle='rgba(60,30,0,.35)';x.lineWidth=3;x.strokeRect(-62,-30,98,94);x.restore();}
+function reelWindow(x,y,h){x.save();x.fillStyle=C.yellow;x.beginPath();x.roundRect(CX-250,y,500,h,26);x.fill();x.restore();}
+
+const CONCEPTS={
+B:{title:'B · Slot roll',sub:'Stays light. "Paid" spins like a slot reel and lands on "FREE".',frames:[
+ x=>{cream(x);logo(x,CX,CY,10.6);},
+ x=>{cream(x);x.save();x.beginPath();x.rect(0,0,FW,FH);x.clip();ghost(x,()=>logo(x,CX,-70,10.6),2,0,30);x.restore();
+   txt(x,'Paid',CX,300,900,230,'#B9AE8F',-8);txt(x,'delivery',CX,420,800,112,'#0B0B0E',-2);},
+ x=>{cream(x);reelWindow(x,95,215);x.save();x.beginPath();x.roundRect(CX-250,95,500,215,26);x.clip();
+   ['Paid','FREE','Paid','FREE'].forEach((w,i)=>{x.globalAlpha=.35;txt(x,w,CX,140+i*95,900,230,'#0B0B0E',-8);});
+   x.globalAlpha=1;const g=x.createLinearGradient(0,95,0,310);g.addColorStop(0,'rgba(243,224,8,1)');g.addColorStop(.25,'rgba(243,224,8,0)');g.addColorStop(.75,'rgba(243,224,8,0)');g.addColorStop(1,'rgba(243,224,8,1)');x.fillStyle=g;x.fillRect(0,95,FW,215);x.restore();
+   txt(x,'delivery',CX,420,800,112,'#0B0B0E',-2);},
+ x=>{cream(x);reelWindow(x,95,215);txt(x,'FREE',CX,292,900,230,'#0B0B0E',-8);txt(x,'delivery',CX,420,800,112,'#0B0B0E',-2);
+   x.strokeStyle=C.pink;x.lineWidth=8;x.beginPath();x.roundRect(CX-266,80,532,246,34);x.stroke();},
+ x=>{fill(x,C.yellow);lockup(x,'FREE','delivery');confetti(x,4,30,CX,CY,470,250);},
+ x=>{fill(x,C.yellow);x.save();x.beginPath();x.rect(0,0,FW,FH);x.clip();ghost(x,()=>lockup(x,'FREE','delivery'),4,0,-36);x.restore();
+   x.save();x.beginPath();x.rect(0,FH*.62,FW,FH);x.clip();cream(x);logo(x,CX,FH*.62+250,10.6);x.restore();},
+],meta:[['Rest','0.0–0.6s','The pill as today.'],['Roll','0.6–1.4s','Logo rolls up like a reel. "Paid delivery" rolls in, "Paid" muted.'],['Spin','1.4–2.4s','"Paid" spins in a yellow reel window, blurring through FREE.'],['Land','2.4–3.2s','Reel lands on FREE with a bounce and a pink outline flash.'],['Payoff','3.2–4.8s','Pill floods yellow: "FREE delivery". Confetti.'],['Return','4.8–6.0s','Whole pill rolls up; logo rolls in from below. Loop.']]},
+
+C:{title:'C · Parcel dash',sub:'A parcel races across the pill. Its colour trail writes the message.',frames:[
+ x=>{cream(x);logo(x,CX,CY,10.6);},
+ x=>{cream(x);x.save();x.beginPath();x.rect(0,0,FW,FH);x.clip();ghost(x,()=>logo(x,CX-380,CY,10.6),3,30,0);x.restore();speed(x,2,10,150,350,620,970,'#0B0B0E',.35);parcel(x,820,CY,1.6,-.12);},
+ x=>{cream(x);x.save();x.beginPath();x.rect(560,0,FW,FH);x.clip();
+   [[C.green,160],[C.red,215],[C.pink,270],[C.yellow,325]].forEach(([c,y])=>{x.fillStyle=c;x.fillRect(560,y-40,FW,60);});
+   lockup(x,'FREE','delivery');x.restore();parcel(x,470,CY,1.6,.08);speed(x,6,8,160,340,0,380,'#0B0B0E',.3);},
+ x=>{fill(x,C.yellow);lockup(x,'FREE','delivery');speed(x,8,6,80,420,0,160,'#0B0B0E',.25);parcel(x,60,CY+40,1.3,-.2);},
+ x=>{fill(x,C.yellow);parcel(x,175,CY,1.75,-.08);txt(x,'FREE',335,280,900,200,'#0B0B0E',-6,'left');txt(x,'delivery',338,395,800,96,'#0B0B0E',-2,'left');},
+ x=>{cream(x);parcel(x,CX,CY+170,1.6,0);logo(x,CX,CY-30,10.6);confetti(x,9,24,CX,CY-30,430,230);},
+],meta:[['Rest','0.0–0.6s','The pill as today.'],['Enter','0.6–1.2s','Logo slides left; a parcel zooms in from the right.'],['Dash','1.2–2.2s','The parcel races left, laying logo-colour stripes that reveal the words.'],['Revealed','2.2–2.8s','"FREE delivery" fully written, parcel exiting left.'],['Payoff','2.8–4.8s','Parcel bounces back as an icon beside the lockup.'],['Return','4.8–6.0s','Logo pops out of the parcel. Loop.']]},
+
+D:{title:'D · Layer peel',sub:'The logo\'s own colour layers become full-bleed wipes. Fully brand-native.',frames:[
+ x=>{cream(x);logo(x,CX,CY,10.6);},
+ x=>{cream(x);logo(x,CX,CY,10.6,{off:[[-170,0],[-60,0],[60,0],[150,0],[150,0]]});},
+ x=>{fill(x,C.green);txt(x,'FREE',CX,330,900,290,'#fff',-10);x.fillStyle=C.red;x.fillRect(FW-120,0,120,FH);},
+ x=>{fill(x,C.green);x.fillStyle=C.red;x.fillRect(0,0,FW*.1,FH);x.fillStyle=C.pink;x.fillRect(FW*.1,0,FW,FH);txt(x,'delivery',CX+40,320,800,170,'#0B0B0E',-4);},
+ x=>{fill(x,C.yellow);[C.green,C.red,C.pink].forEach((c,i)=>{x.fillStyle=c;x.fillRect(0,FH-36+i*12,FW,12);});lockup(x,'FREE','delivery');},
+ x=>{cream(x);[C.green,C.red,C.pink,C.yellow].forEach((c,i)=>{x.fillStyle=c;x.beginPath();x.ellipse(CX+(i-1.5)*30,CY,420-i*40,220-i*22,0,0,7);x.fill();});
+   x.save();x.translate(CX,CY);x.scale(10.6,10.6);x.translate(-20.68,-12);x.fillStyle='#000';['o','n','e'].forEach(k=>x.fill(LOGO[k]));x.restore();},
+],meta:[['Rest','0.0–0.6s','The pill as today.'],['Peel','0.6–1.0s','Logo layers slide apart sideways, flat.'],['Green','1.0–2.0s','Green layer wipes full-bleed: "FREE" in white.'],['Pink','2.0–3.0s','Red then pink wipe over: "delivery".'],['Payoff','3.0–4.8s','Yellow lands: "FREE delivery", the other layers as an edge stripe.'],['Return','4.8–6.0s','Layers shrink back and stack into the logo. Loop.']]},
+
+E:{title:'E · Edit the fee',sub:'Feels native to the app: like someone typing in the search bar next to it.',frames:[
+ x=>{cream(x);logo(x,CX,CY,10.6);},
+ x=>{cream(x);txt(x,'Delivery fee',90,300,800,140,'#0B0B0E',-3,'left');x.fillStyle=C.yellow;x.fillRect(870,190,10,140);},
+ x=>{cream(x);setF(x,800,140,-3);const w=x.measureText('Delivery ').width;x.fillStyle=C.yellow;x.fillRect(90+w-6,185,x.measureText('fee').width+16,150);txt(x,'Delivery fee',90,300,800,140,'#0B0B0E',-3,'left');},
+ x=>{cream(x);txt(x,'FREE',CX-20,288,900,250,'#0B0B0E',-8);x.fillStyle=C.yellow;x.fillRect(CX+300,110,12,190);txt(x,'delivery',CX,420,800,112,'#B9AE8F',-2);},
+ x=>{fill(x,C.yellow);lockup(x,'FREE','delivery');x.strokeStyle=C.pink;x.lineWidth=14;x.lineCap='round';x.beginPath();x.moveTo(250,315);x.quadraticCurveTo(CX,345,720,308);x.stroke();},
+ x=>{cream(x);x.fillStyle='rgba(243,224,8,.55)';x.fillRect(90,150,790,200);logo(x,CX,CY,10.6,{a:.9});},
+],meta:[['Rest','0.0–0.6s','The pill as today.'],['Typed','0.6–1.6s','"Delivery fee" types in letter by letter, yellow caret.'],['Select','1.6–2.2s','"fee" gets selected with a yellow highlight.'],['Retype','2.2–3.2s','"fee" is deleted; "FREE" types in on top, "delivery" drops below.'],['Payoff','3.2–4.8s','Pill turns yellow, lockup grows, pink underline swoosh.'],['Return','4.8–6.0s','Select-all highlight collapses into the logo. Loop.']]},
+};
+
+function pill(f){const k=mk(FW,FH),x=k.getContext('2d');f(x);const p=mk(FW,FH),q=p.getContext('2d');q.beginPath();q.roundRect(0,0,FW,FH,RAD);q.clip();q.drawImage(k,0,0);
+  q.strokeStyle='rgba(255,255,255,.9)';q.lineWidth=8;q.beginPath();q.roundRect(4,4,FW-8,FH-8,RAD-4);q.stroke();return p;}
+function sheet(c){const pills=c.frames.map(pill);
+ const SW=2400,SH=2200,S=mk(SW,SH),x=S.getContext('2d');x.fillStyle='#F2F3F5';x.fillRect(0,0,SW,SH);
+ setF(x,900,64,-1);x.fillStyle=C.ink;x.fillText(c.title,100,140);setF(x,500,30);x.fillStyle='#555';x.fillText(c.sub+'  ·  6s loop · flat logo · Figtree',100,195);
+ pills.forEach((p,i)=>{const cx=100+(i%3)*760,cy=280+Math.floor(i/3)*700,w=700,h=w*FH/FW;
+   x.save();x.shadowColor='rgba(0,0,0,.12)';x.shadowBlur=30;x.shadowOffsetY=10;x.drawImage(p,cx,cy,w,h);x.restore();
+   const m=c.meta[i];setF(x,800,38);x.fillStyle=C.ink;x.fillText((i+1)+' · '+m[0],cx,cy+h+64);
+   setF(x,700,28);x.fillStyle='#8a6d00';x.textAlign='right';x.fillText(m[1],cx+w,cy+h+62);x.textAlign='left';
+   setF(x,500,26);x.fillStyle='#555';let line='',ly=cy+h+108;m[2].split(' ').forEach(wd=>{if(x.measureText(line+wd).width>w){x.fillText(line,cx,ly);line='';ly+=36;}line+=wd+' ';});x.fillText(line,cx,ly);});
+ const ay=1720;setF(x,800,36);x.fillStyle=C.ink;x.fillText('At actual size (retina, 194 × 100px)',100,ay);
+ const sb=x.createLinearGradient(0,ay+30,0,ay+380);sb.addColorStop(0,'#C6DDF6');sb.addColorStop(1,'#E4F0FA');x.fillStyle=sb;x.beginPath();x.roundRect(100,ay+40,2200,330,30);x.fill();
+ pills.forEach((p,i)=>{const px=150+i*355,py=ay+120;x.drawImage(p,px,py,194,100);setF(x,700,24);x.fillStyle='#1F3A68';x.fillText(String(i+1),px,py+150);});
+ return S;}
+window.out={};
+(async()=>{await Promise.all([500,600,700,800,900].map(w=>document.fonts.load(`${w} 40px Figtree`)));
+ for(const [k,c] of Object.entries(CONCEPTS)) out['sheet-'+k]=sheet(c).toDataURL();
+ window.done=true;})();
+</script></body></html>
