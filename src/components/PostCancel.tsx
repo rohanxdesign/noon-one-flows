@@ -176,7 +176,7 @@ function CouponCard({ expires }: { expires: string }) {
             <div className="bg-[#e1efff] border border-dashed border-[#71b2ff] rounded-[12.48px] px-[10.98px] py-[10.98px] shadow-[0px_0px_16px_rgba(22,22,22,0.04)]">
               <p className="font-noontree font-extrabold text-[23.34px] leading-[27.46px] text-[#0076ff] tracking-[-0.22px] whitespace-nowrap">
                 <Aed />
-                4.99/month
+                4.99/mo
               </p>
             </div>
           </div>
@@ -197,7 +197,7 @@ function CouponCard({ expires }: { expires: string }) {
         >
           <p className="font-noontree font-medium text-[15px] leading-[18px] text-white tracking-[-0.12px] whitespace-nowrap">
             Continue at <Aed />
-            4.99/month
+            4.99/mo
           </p>
         </button>
       </div>
@@ -419,7 +419,7 @@ export default function PostCancel({
         >
           <p className="font-noontree font-medium text-[15px] leading-[18px] text-white tracking-[-0.12px] whitespace-nowrap">
             Continue at <Aed />
-            4.99/month
+            4.99/mo
           </p>
         </button>
         <div className="flex justify-center pt-[10px]">

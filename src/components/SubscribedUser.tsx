@@ -183,7 +183,7 @@ function CurrentPlanCard({ onManage }: { onManage?: () => void }) {
           </div>
           <p className="font-normal leading-[17px] text-[12px] text-black/75 tracking-[-0.3px] whitespace-nowrap">
             Auto renews on 24 May 2026 at <Aed />
-            24.99/month
+            24.99/mo
           </p>
         </div>
         {/* Active tag */}

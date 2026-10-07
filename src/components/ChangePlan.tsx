@@ -159,7 +159,7 @@ function PlanCard({
       <div className="flex items-baseline gap-[4px]">
         <Aed className="text-[16px] text-[#1d2539]" />
         <p className="font-noontree font-semibold text-[#1d2539] text-[14px] leading-[18px] tracking-[-0.14px]">
-          {plan.price}/month
+          {plan.price}/mo
         </p>
       </div>
 
