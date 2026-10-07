@@ -1,0 +1,115 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Pill storyboard</title>
+<style>
+@font-face{font-family:Figtree;src:url(../fonts/figtree-500.ttf);font-weight:500}
+@font-face{font-family:Figtree;src:url(../fonts/figtree-700.ttf);font-weight:700}
+@font-face{font-family:Figtree;src:url(../fonts/figtree-800.ttf);font-weight:800}
+@font-face{font-family:Figtree;src:url(../fonts/figtree-900.ttf);font-weight:900}
+body{margin:0;background:#111}
+</style></head><body>
+<script src="logo.js"></script>
+<script>
+const FW=970, FH=500, RAD=120; // 97x50pt pill @10x
+const mk=(w,h)=>{const k=document.createElement('canvas');k.width=w;k.height=h;return k;};
+const setF=(x,w,s,ls=0)=>{x.font=`${w} ${s}px Figtree`;x.letterSpacing=ls+'px';};
+function rng(s){return()=>{s|=0;s=s+0x6d2b79f5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function logo(x,cx,cy,s,a=1){x.save();x.globalAlpha=a;x.translate(cx,cy);x.scale(s,s);x.translate(-20.68,-12);
+  [['green',C.green],['red',C.red],['pink',C.pink],['yellow',C.yellow]].forEach(([k,c])=>{x.fillStyle=c;x.fill(LOGO[k]);});
+  x.fillStyle='#000';['o','n','e'].forEach(k=>x.fill(LOGO[k]));x.restore();}
+function cream(x){const g=x.createLinearGradient(0,0,0,FH);g.addColorStop(0,'#FFFCF3');g.addColorStop(1,'#F7E6B8');x.fillStyle=g;x.fillRect(0,0,FW,FH);
+  const r=x.createRadialGradient(FW/2,FH*.35,0,FW/2,FH*.35,FW*.55);r.addColorStop(0,'rgba(255,255,255,.95)');r.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=r;x.fillRect(0,0,FW,FH);}
+function ink(x){x.fillStyle=C.ink;x.fillRect(0,0,FW,FH);
+  const R=rng(5);[[C.pink,.18],[C.green,.12],[C.red,.12]].forEach(([c,a],i)=>{const bx=FW*(.2+.3*i),by=FH*(R()),r=360;const g=x.createRadialGradient(bx,by,0,bx,by,r);g.addColorStop(0,c+Math.round(a*255).toString(16).padStart(2,'0'));g.addColorStop(1,c+'00');x.fillStyle=g;x.fillRect(bx-r,by-r,2*r,2*r);});}
+// hook text layout
+function hook(x,strike,glitch){
+  x.textAlign='center';
+  setF(x,800,104,-1);x.fillStyle='#fff';x.fillText('Delivery',FW/2,205);
+  setF(x,900,240,-8);x.fillStyle=C.yellow;x.fillText('fee?',FW/2,430);
+  if(strike){x.save();x.translate(FW/2-260,330);x.rotate(-.05);x.fillStyle=C.red;x.fillRect(0,-18,520*strike,36);x.restore();}
+  x.textAlign='left';
+}
+const frames=[
+ // 1 rest
+ x=>{cream(x);logo(x,FW/2,FH/2,10.6);},
+ // 2 hook
+ x=>{ink(x);
+   // logo exiting up, clipped
+   logo(x,FW/2,-150,10.6,.9);
+   hook(x,0);
+   x.fillStyle=C.yellow;x.fillRect(FW/2-300,232,600,6);},
+ // 3 kill it
+ x=>{ink(x);const b=mk(FW,FH),y=b.getContext('2d');hook(y,1);
+   const R=rng(9);let yy=0;while(yy<FH){const h=8+R()*40,on=R()<.45&&yy>230;x.drawImage(b,0,yy,FW,h,on?(R()-.5)*90:0,yy,FW,h);
+     if(on&&R()<.5){x.globalCompositeOperation='lighter';x.globalAlpha=.45;x.drawImage(b,0,yy,FW,h,(R()-.5)*90+14,yy,FW,h);x.globalAlpha=1;x.globalCompositeOperation='source-over';}yy+=h;}
+   // right side disintegrating into particles
+   const d=y.getImageData(0,0,FW,FH).data;const P=rng(3);
+   x.save();x.beginPath();for(let i=0;i<900;i++){const px=FW*.6+P()*FW*.4,py=250+P()*200;x.rect(px,py,10+P()*16,10+P()*16);}x.clip();ink(x);x.restore();
+   for(let yy2=250;yy2<450;yy2+=6)for(let xx=FW*.55|0;xx<FW;xx+=6){const k=(yy2*FW+xx)*4;if(d[k+3]<128||P()<.45)continue;
+     const f=(xx-FW*.55)/(FW*.45);x.fillStyle=d[k]>150&&d[k+1]<100?C.red:C.yellow;x.globalAlpha=.9;
+     x.fillRect(xx+f*f*260*P(),yy2+(P()-.5)*120*f,5,5);}x.globalAlpha=1;},
+ // 4 lock: particles converging into flat logo
+ x=>{ink(x);const s=mk(FW,FH),y=s.getContext('2d',{willReadFrequently:true});logo(y,FW/2,FH/2,10.6);
+   const d=y.getImageData(0,0,FW,FH).data;const R=rng(11);
+   // flash ring
+   x.strokeStyle='rgba(243,224,8,.55)';x.lineWidth=14;x.beginPath();x.ellipse(FW/2,FH/2,330,210,0,0,7);x.stroke();
+   x.strokeStyle='rgba(240,98,152,.45)';x.lineWidth=6;x.beginPath();x.ellipse(FW/2,FH/2,400,255,0,0,7);x.stroke();
+   logo(x,FW/2,FH/2,10.6,.9);
+   for(let yy=0;yy<FH;yy+=5)for(let xx=0;xx<FW;xx+=5){const k=(yy*FW+xx)*4;if(d[k+3]<128||R()<.82)continue;
+     const r=d[k],g=d[k+1],b=d[k+2];const col=r<60&&g<60?'#fff':`rgb(${r},${g},${b})`;
+     const dx=xx-FW/2,dy=yy-FH/2,sp=R()*.9,rad=40+R()*R()*170;const a=Math.atan2(dy,dx)+sp*.6;const L=Math.hypot(dx,dy)+rad;
+     x.fillStyle=col;x.fillRect(FW/2+Math.cos(a)*L,FH/2+Math.sin(a)*L,4.5,4.5);}
+   const g=x.createRadialGradient(FW/2,FH/2,0,FW/2,FH/2,300);g.addColorStop(0,'rgba(255,250,230,.35)');g.addColorStop(1,'rgba(255,250,230,0)');x.fillStyle=g;x.fillRect(0,0,FW,FH);},
+ // 5 payoff
+ x=>{x.fillStyle=C.yellow;x.fillRect(0,0,FW,FH);
+   x.strokeStyle='rgba(11,11,14,.12)';x.lineWidth=3;x.beginPath();for(let gx=40;gx<FW;gx+=90)for(let gy=30;gy<FH;gy+=90){x.moveTo(gx-7,gy);x.lineTo(gx+7,gy);x.moveTo(gx,gy-7);x.lineTo(gx,gy+7);}x.stroke();
+   x.lineCap='round';[[C.pink,300,22,.3,1.0],[C.green,330,12,3.6,.7]].forEach(([c,r,w,a,l])=>{x.strokeStyle=c;x.lineWidth=w;x.beginPath();x.ellipse(FW/2,FH/2,r*1.5,r*.78,0,a,a+l);x.stroke();});
+   x.textAlign='center';
+   const t=mk(FW,FH),y=t.getContext('2d');setF(y,900,250,-8);y.textAlign='center';y.fillStyle='#000';y.fillText('FREE',FW/2,288);
+   x.drawImage(t,0,0);
+   // liquid rising inside FREE
+   const l=mk(FW,FH),z=l.getContext('2d');z.fillStyle=C.pink;z.beginPath();z.moveTo(0,FH);for(let xx=0;xx<=FW;xx+=10)z.lineTo(xx,190+Math.sin(xx*.02)*14+Math.sin(xx*.05)*5);z.lineTo(FW,FH);z.fill();
+   [[C.green,300,240,150],[C.red,640,260,130]].forEach(([c,bx,by,r])=>{const g=z.createRadialGradient(bx,by,0,bx,by,r);g.addColorStop(0,c);g.addColorStop(1,c+'00');z.globalCompositeOperation='source-atop';z.fillStyle=g;z.fillRect(bx-r,by-r,2*r,2*r);});
+   y.globalCompositeOperation='source-in';y.drawImage(l,0,0);x.drawImage(t,0,0);
+   setF(x,800,112,-2);x.fillStyle=C.ink;x.fillText('delivery',FW/2,420);x.textAlign='left';},
+ // 6 return
+ x=>{cream(x);
+   // yellow iris closing, logo settling
+   x.save();x.beginPath();x.rect(0,0,FW,FH);x.ellipse(FW/2,FH/2,520,330,0,0,7);x.fillStyle=C.yellow;x.fill('evenodd');x.restore();
+   x.strokeStyle=C.pink;x.lineWidth=10;x.beginPath();x.ellipse(FW/2,FH/2,520,330,0,0,7);x.stroke();
+   logo(x,FW/2,FH/2,11.6);
+   setF(x,900,58,-1);x.textAlign='center';x.fillStyle='rgba(11,11,14,.0)';x.textAlign='left';
+   const R=rng(21),cols=[C.yellow,C.pink,C.green,C.red];for(let i=0;i<26;i++){const a=R()*6.28,r=280+R()*120;x.fillStyle=cols[i%4];x.save();x.translate(FW/2+Math.cos(a)*r*1.4,FH/2+Math.sin(a)*r*.8);x.rotate(R()*3);x.fillRect(-9,-4,18,8);x.restore();}},
+];
+const meta=[
+ ['1 · Rest','0.0–0.6s','The pill as it looks today. Loop in and out point.'],
+ ['2 · Hook','0.6–1.4s','Logo slides up and out. "Delivery fee?" drops in from a yellow line.'],
+ ['3 · Kill it','1.4–2.0s','Red strike-through, slice glitch, "fee?" breaks into particles.'],
+ ['4 · Lock','2.0–3.0s','Particles stream into the flat One logo. Flash and ring, no 3D.'],
+ ['5 · Payoff','3.0–4.8s','Yellow wipe. "FREE" drops in, "delivery" wipes under. Liquid fills FREE.'],
+ ['6 · Return','4.8–6.0s','Yellow iris closes back to cream, logo settles. Loops to frame 1.'],
+];
+window.out={};
+(async()=>{
+ await Promise.all([500,700,800,900].map(w=>document.fonts.load(`${w} 40px Figtree`)));
+ const pills=frames.map((f,i)=>{const k=mk(FW,FH),x=k.getContext('2d');f(x);
+   const p=mk(FW,FH),q=p.getContext('2d');q.beginPath();q.roundRect(0,0,FW,FH,RAD);q.clip();q.drawImage(k,0,0);
+   q.strokeStyle='rgba(255,255,255,.9)';q.lineWidth=8;q.beginPath();q.roundRect(4,4,FW-8,FH-8,RAD-4);q.stroke();
+   out['frame-'+(i+1)]=p.toDataURL();return p;});
+ // sheet
+ const SW=2400,SH=2320,S=mk(SW,SH),x=S.getContext('2d');x.fillStyle='#F2F3F5';x.fillRect(0,0,SW,SH);
+ setF(x,900,64,-1);x.fillStyle=C.ink;x.fillText('noon One pill: 6s loop storyboard',100,140);
+ setF(x,500,30);x.fillStyle='#555';x.fillText('97 × 50pt pill next to search, shown at 10× · Figtree only · flat logo, no 3D',100,195);
+ pills.forEach((p,i)=>{const cx=100+(i%3)*760,cy=280+Math.floor(i/3)*720,w=700,h=w*FH/FW;
+   x.save();x.shadowColor='rgba(0,0,0,.12)';x.shadowBlur=30;x.shadowOffsetY=10;x.drawImage(p,cx,cy,w,h);x.restore();
+   setF(x,800,38);x.fillStyle=C.ink;x.fillText(meta[i][0],cx,cy+h+64);
+   setF(x,700,28);x.fillStyle='#8a6d00';x.textAlign='right';x.fillText(meta[i][1],cx+w,cy+h+62);x.textAlign='left';
+   setF(x,500,26);x.fillStyle='#555';const words=meta[i][2].split(' ');let line='',ly=cy+h+108;words.forEach(wd=>{if(x.measureText(line+wd).width>w){x.fillText(line,cx,ly);line='';ly+=36;}line+=wd+' ';});x.fillText(line,cx,ly);});
+ // actual size strip (2x retina = 194x100)
+ const ay=1760;setF(x,800,36);x.fillStyle=C.ink;x.fillText('At actual size (retina, 194 × 100px)',100,ay);
+ const sb=x.createLinearGradient(0,ay+30,0,ay+420);sb.addColorStop(0,'#C6DDF6');sb.addColorStop(1,'#E4F0FA');x.fillStyle=sb;x.beginPath();x.roundRect(100,ay+40,2200,380,30);x.fill();
+ pills.forEach((p,i)=>{const px=150+i*355,py=ay+130;
+   x.fillStyle='#fff';x.beginPath();x.roundRect(px-0,py-0,194,100,24);x.fill();x.drawImage(p,px,py,194,100);
+   setF(x,700,24);x.fillStyle='#1F3A68';x.fillText(String(i+1),px,py+150);});
+ setF(x,500,24);x.fillStyle='#3A4150';x.fillText('Each beat has to read at this size: one or two words, maximum contrast.',150,ay+360);
+ out.sheet=S.toDataURL();window.done=true;
+})();
+</script></body></html>
