@@ -33,7 +33,21 @@ function parcel(x,cx,cy,s,rot=0){x.save();x.translate(cx,cy);x.rotate(rot);x.sca
   x.strokeStyle='rgba(60,30,0,.35)';x.lineWidth=3;x.strokeRect(-62,-30,98,94);x.restore();}
 function reelWindow(x,y,h){x.save();x.fillStyle=C.yellow;x.beginPath();x.roundRect(CX-250,y,500,h,26);x.fill();x.restore();}
 
+const IMG={};
+const NAVY='#002A5B';
+const img=(n,x,cx,cy,w,a=1)=>{const i=IMG[n];const h=w*i.height/i.width;x.save();x.globalAlpha=a;x.drawImage(i,cx-w/2,cy-h/2,w,h);x.restore();};
 const CONCEPTS={
+F:{title:'F · Van run (illustration library)',sub:'Built from the noon One library: the van, category tiles and bags.',frames:[
+ x=>{cream(x);logo(x,CX,CY,10.6);},
+ x=>{fill(x,NAVY);speed(x,3,14,120,380,380,970,'#4D7BC0',.6);x.save();x.beginPath();x.rect(0,0,FW,FH);x.clip();ghost(x,()=>logo(x,-60,CY,10.6),2,-40,0);x.restore();img('van',x,CX+150,CY+10,780);},
+ x=>{fill(x,NAVY);speed(x,5,16,90,420,0,970,'#4D7BC0',.5);img('van',x,CX-40,CY+20,760);
+   ['cat-noon','cat-supermall','cat-minutes','cat-food','cat-nownow'].forEach((n,i)=>{x.save();x.translate(FW-110-i*0+ (i%2?-40:30),70+i*0);x.restore();});
+   [['cat-noon',830,95,120,-.2],['cat-supermall',890,250,100,.15],['cat-minutes',800,400,110,-.1],['cat-food',700,80,90,.25],['cat-nownow',650,430,80,-.25]].forEach(([n,px,py,w,r])=>{x.save();x.translate(px,py);x.rotate(r);img(n,x,0,0,w);x.restore();});},
+ x=>{fill(x,C.yellow);txt(x,'FREE',CX,260,900,250,'#0B0B0E',-8);speed(x,8,8,330,470,560,970,'#0B0B0E',.25);img('van',x,CX-60,395,330);},
+ x=>{fill(x,C.yellow);lockup(x,'FREE','delivery');},
+ x=>{cream(x);x.save();x.beginPath();x.rect(0,0,FW,FH);x.clip();img('bags',x,CX,FH-40,1150);x.restore();logo(x,CX,CY-70,8.8);},
+],meta:[['Rest','0.0–0.6s','The pill as today.'],['Van in','0.6–1.4s','Pill turns navy (the van\'s own colour). Logo whooshes out left, the noon van drives in.'],['Every order','1.4–2.4s','Category tiles (noon, supermall, Minutes, Food, NowNow) fly into the van.'],['FREE','2.4–3.4s','Yellow wipe; "FREE" slams in and the van zips underneath like an underline.'],['Payoff','3.4–4.8s','"FREE delivery" holds, clean and legible.'],['Return','4.8–6.0s','The bags cluster rises from the bottom edge and the logo drops back in. Loop.']]},
+
 B:{title:'B · Slot roll',sub:'Stays light. "Paid" spins like a slot reel and lands on "FREE".',frames:[
  x=>{cream(x);logo(x,CX,CY,10.6);},
  x=>{cream(x);x.save();x.beginPath();x.rect(0,0,FW,FH);x.clip();ghost(x,()=>logo(x,CX,-70,10.6),2,0,30);x.restore();
@@ -96,6 +110,7 @@ function sheet(c){const pills=c.frames.map(pill);
  return S;}
 window.out={};
 (async()=>{await Promise.all([500,600,700,800,900].map(w=>document.fonts.load(`${w} 40px Figtree`)));
- for(const [k,c] of Object.entries(CONCEPTS)) out['sheet-'+k]=sheet(c).toDataURL();
+ await Promise.all(['van','bags','cat-noon','cat-supermall','cat-minutes','cat-food','cat-nownow'].map(n=>new Promise(r=>{const i=new Image();i.onload=()=>{IMG[n]=i;r();};i.src='illustrations/'+n+'.png';})));
+ const only=new URLSearchParams(location.search).get('only');for(const [k,c] of Object.entries(CONCEPTS)) if(!only||only.includes(k)) out['sheet-'+k]=sheet(c).toDataURL();
  window.done=true;})();
 </script></body></html>

@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path'; import { fileURLToPath } from 'node:url';
 const DIR = path.dirname(fileURLToPath(import.meta.url)), ROOT = path.dirname(DIR);
-const srv = http.createServer((q, r) => { const p = path.join(ROOT, decodeURIComponent(q.url.split('?')[0])); if (!fs.existsSync(p)) { r.writeHead(404); return r.end(); } r.writeHead(200, { 'Content-Type': p.endsWith('.html') ? 'text/html' : p.endsWith('.js') ? 'text/javascript' : 'font/ttf' }); fs.createReadStream(p).pipe(r); });
+const srv = http.createServer((q, r) => { const p = path.join(ROOT, decodeURIComponent(q.url.split('?')[0])); if (!fs.existsSync(p)) { r.writeHead(404); return r.end(); } r.writeHead(200, { 'Content-Type': p.endsWith('.html') ? 'text/html' : p.endsWith('.js') ? 'text/javascript' : p.endsWith('.png') ? 'image/png' : 'font/ttf' }); fs.createReadStream(p).pipe(r); });
 await new Promise(r => srv.listen(0, r));
 const b = await chromium.launch(); const pg = await b.newPage();
 pg.on('pageerror', e => { console.error(e); process.exit(1); });
